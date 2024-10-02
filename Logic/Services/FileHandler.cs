@@ -74,6 +74,20 @@ namespace Files
             }
         }
 
+        public async Task<List<string>> GetStringsFromFile(string filePath)
+        {
+            try
+            {
+                var strings = (await File.ReadAllLinesAsync(filePath)).ToList(); 
+                return strings; 
+            }
+            catch
+            {
+                _messageHandlerFactory.CreateMessageHandler().SendMessage("Cant open file");
+                return new List<string>(); 
+            }
+        }
+
         private void AddText(FileStream fs, string value)
         {
             byte[] info = new UTF8Encoding(true).GetBytes(value);
