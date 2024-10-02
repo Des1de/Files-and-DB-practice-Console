@@ -20,7 +20,8 @@ namespace Services
                 .Append("||")
                 .Append(GenerateEvenNumber())
                 .Append("||")
-                .Append(GenerateFractionalNumber()); 
+                .Append(GenerateFractionalNumber())
+                .Append("||"); 
             return sb.ToString(); 
         }
         private string GenerateRandomDate()
