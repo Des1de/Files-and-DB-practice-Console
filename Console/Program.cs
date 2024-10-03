@@ -1,11 +1,11 @@
-﻿using Entities;
-using Files;
-using Services;
+﻿using Repositories;
 
-var entity = new GeneratedStringEntity("new Generator().GenerateString()");
+var generatedStringRepository = new GeneratedStringRepository(); 
+var strings = await generatedStringRepository.GetGeneratedStrings(); 
+foreach(var str in strings)
+{
+    System.Console.WriteLine(str);
+}
+System.Console.WriteLine(await generatedStringRepository.GetEvenNumbersSum());
 
-System.Console.WriteLine(entity);
-
-// var fileHandler = new FileHandler(100, 100000, new ConsoleMessageHandlerFactory());
-// fileHandler.CreateFiles(); 
-// await fileHandler.MergeInOneFileAsync("");  
+System.Console.WriteLine(await generatedStringRepository.GetFratcionalsMedian());

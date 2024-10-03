@@ -13,6 +13,10 @@ namespace Entities
         
         private const string PATTERN = @"^(?<date>\d{2}\.\d{2}\.\d{4})\|\|(?<latin>[^\|]+)\|\|(?<cyrillic>[^\|]+)\|\|(?<evennumber>\d+)\|\|(?<fractional>[\d,]+)\|\|$";
 
+        public GeneratedStringEntity()
+        {
+            
+        }
         public GeneratedStringEntity(string GeneratedString)
         {
             GeneratedString.Trim('\n'); 
