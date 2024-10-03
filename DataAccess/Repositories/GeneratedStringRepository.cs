@@ -1,5 +1,6 @@
 using Dapper;
 using Entities;
+using Interfaces;
 using Npgsql;
 
 namespace Repositories
@@ -7,7 +8,11 @@ namespace Repositories
     public class GeneratedStringRepository
     {
         private const string ConnectionString = "Host=localhost;Port=5432;Database=B1Task1;Username=postgres;password=postgres";
-
+        private readonly IMessageHandlerFactory _messageHandlerFactory;
+        public GeneratedStringRepository(IMessageHandlerFactory messageHandlerFactory)
+        {
+            _messageHandlerFactory = messageHandlerFactory; 
+        } 
         public async Task<List<string>> GetGeneratedStrings()
         {
             var sql = "SELECT * FROM generatedstrings";
@@ -30,11 +35,12 @@ namespace Repositories
                     try
                     {
                         var entity = new GeneratedStringEntity(strings[i]);
+                        _messageHandlerFactory.CreateMessageHandler().SendMessage($"Adding string {i+1}: {strings[i]}\n {strings.Count-i-1} strings left"); 
                         await connection.ExecuteAsync(sql, entity);
                     }
                     catch(Exception e)
                     {
-                        Console.WriteLine(e.Message);
+                        Console.WriteLine($"Failed to add string {strings[i]} : {e.Message}");
                         continue;
                     }
                 }   
