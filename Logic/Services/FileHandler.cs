@@ -21,11 +21,14 @@ namespace Files
         public async Task MergeInOneFileAsync(string deleteSubstring)
         {
             string[] files = Directory.GetFiles(DIRECTORY_PATH_GENERATED, "*.txt");
+            if(files.Length == 0) throw new Exception("No files to merge"); 
             var linesToWrite = new ConcurrentBag<string>();
+            _messageHandlerFactory.CreateMessageHandler().SendMessage("Merge started"); 
             await Task.WhenAll(files.Select(async filePath =>
             {
                 var lines = await File.ReadAllLinesAsync(filePath);
                 var newFileLines = new List<string>(); 
+                int deletionCount = 0; 
                 foreach (var line in lines)
                 {
                     if (!line.Contains(deleteSubstring) || String.Equals(deleteSubstring, ""))
@@ -35,17 +38,20 @@ namespace Files
                     }
                     else
                     {
-                        _messageHandlerFactory.CreateMessageHandler().SendMessage($"Line {line} deleted"); 
+                        deletionCount++; 
                     }
                 }
                 await File.WriteAllLinesAsync(filePath, newFileLines); 
+                _messageHandlerFactory.CreateMessageHandler().SendMessage($"File {filePath}: deleted {deletionCount} strings"); 
             }));
             File.Delete(MAIN_FILE_PATH);
             await File.WriteAllLinesAsync(MAIN_FILE_PATH, linesToWrite);
+            _messageHandlerFactory.CreateMessageHandler().SendMessage("Merge ended"); 
         }
         public void CreateFiles()
         {
             Directory.CreateDirectory(DIRECTORY_PATH_GENERATED);
+            _messageHandlerFactory.CreateMessageHandler().SendMessage("Generating files...");
             var tasks = new Task[_fileNumber];
             for (int i = 0; i < _fileNumber; i++)
             {
@@ -53,6 +59,7 @@ namespace Files
                 tasks[i].Start();
             }
             Task.WaitAll(tasks);
+            _messageHandlerFactory.CreateMessageHandler().SendMessage("Files were generated successfully");
         }
 
         private void CreateFile(object? stringNumber)
@@ -67,6 +74,7 @@ namespace Files
                         AddText(fs, generator.GenerateString()+"\n");
                     }
                 }
+                _messageHandlerFactory.CreateMessageHandler().SendMessage($"File {fileName}.txt was created successfully");
             }
             else 
             {

@@ -47,12 +47,12 @@ namespace Repositories
             }
         }
 
-        public async Task<int> GetEvenNumbersSum()
+        public async Task<long> GetEvenNumbersSum()
         {
             var sql = @"SELECT SUM(evennumber) FROM generatedstrings"; 
             using(var connection = new NpgsqlConnection(ConnectionString))
             {
-                int result = await connection.ExecuteScalarAsync<int>(sql); 
+                long result = await connection.ExecuteScalarAsync<long>(sql); 
                 return result; 
             }
         }
